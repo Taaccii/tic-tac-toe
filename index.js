@@ -45,3 +45,25 @@ const Gameboard = (() => {
   };
 
 })();
+
+
+const createPlayer = (name, sign) => {
+  return {name, sign};
+}
+
+const GameController = (() => {
+  const players = [
+    createPlayer("Mario", "X"),
+    createPlayer("Luigi", "O"),
+  ];
+  
+  let activePlayer = players[0];
+
+  const swithTurn = () => {
+    activePlayer = activePlayer === players[0] ? players[1] : players[0];
+  }
+
+  const getActivePlayer = () => activePlayer;
+
+  return { getActivePlayer };
+})();
