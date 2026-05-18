@@ -108,19 +108,21 @@ const GameController = (() => {
   const playRound = (row, column) => {
     Gameboard.placeSign(row, column, activePlayer.sign);
 
-    const winner = Gameboard.checkWinner();
+    DisplayController.renderBoard();
 
+    const winner = Gameboard.checkWinner();
     if (winner !== null) {
-      console.log(`${activePlayer.name} ha vinto!`);
+      DisplayController.showResult(`${activePlayer.name} ha vinto!`);
       return;
     }
 
     if (Gameboard.checkTie()) {
-      console.log("Pareggio!");
+      DisplayController.showResult("Pareggio!");
       return;
     }
 
     switchTurn();
+    DisplayController.updateTurnMessage();
   };
 
   return {
@@ -130,3 +132,55 @@ const GameController = (() => {
 
 })();
 
+
+const DisplayController = (() => {
+  const boardDiv = document.getElementById("game-board");
+  const turnMessageDiv = document.getElementById("turn-message");
+  const resultMessageDiv = document.getElementById("result-message");
+
+  const renderBoard = () => {
+    boardDiv.innerHTML = "";
+    const board = Gameboard.getBoard();
+
+    board.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        const cellDiv = document.createElement("div");
+        cellDiv.textContent = cell.getValue() === 0 ? "" : cell.getValue();
+        cellDiv.dataset.row = rowIndex;
+        cellDiv.dataset.column = colIndex;
+
+        cellDiv.addEventListener("click", () => {
+          const row = parseInt(cellDiv.dataset.rowIndex);
+          const column = parseInt(cellDiv.dataset.colIndex);
+          GameController.playRound(row, column);
+        });
+        
+        boardDiv.appendChild(cellDiv);
+      });
+    });
+  };
+
+  const updateTurnMessage = () => {
+  const activePlayer = GameController.getActivePlayer();
+  turnMessageDiv.textContent = `È il turno di ${activePlayer.name}`;
+  };
+
+  const showResult = (message) => {
+    resultMessageDiv.textContent = message;
+  };
+
+  return {
+    renderBoard,
+    updateTurnMessage,
+    showResult,
+  };
+
+})();
+
+
+const init = () => {
+  DisplayController.renderBoard();
+  DisplayController.updateTurnMessage();
+};
+
+init();
