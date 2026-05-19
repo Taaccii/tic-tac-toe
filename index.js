@@ -7,9 +7,12 @@ function Cell() {
     value = player; 
   };
 
+  const reset = () => value = 0;
+
   return {
     addSign,
     getValue,
+    reset,
   };
 }
 
@@ -31,11 +34,12 @@ const Gameboard = (() => {
 
   const placeSign = (row, column, player) => {
 
-   const cell = board[row][column];
+    const cell = board[row][column];
 
-   if (cell.getValue() !== 0) return;
+    if (cell.getValue() !== 0) return false;
 
-   cell.addSign(player);
+    cell.addSign(player);
+    return true;
 
   };
 
@@ -77,11 +81,16 @@ const Gameboard = (() => {
     );
   };
 
+  const resetBoard = () => {
+    board.forEach(row => row.forEach(cell => cell.reset()));
+  }
+
   return {
     placeSign,
     getBoard,
     checkWinner,
     checkTie,
+    resetBoard,
   };
 
 })();
@@ -93,11 +102,25 @@ const createPlayer = (name, sign) => {
 
 const GameController = (() => {
   const players = [
-    createPlayer("Mario", "X"),
-    createPlayer("Luigi", "O"),
+    createPlayer("", "X"),
+    createPlayer("", "O"),
   ];
-  
+
+  let gameActive = false;
   let activePlayer = players[0];
+  
+  const startGame = (nameOne, nameTwo) => {
+    players[0] = createPlayer(nameOne, "X");
+    players[1] = createPlayer(nameTwo, "O");
+    activePlayer = players[0];
+    gameActive = true;
+  }
+
+  const resetGame = () => {
+    Gameboard.resetBoard();
+    gameActive = false;
+    activePlayer = players[0];
+  }
 
   const switchTurn = () => {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
@@ -106,17 +129,22 @@ const GameController = (() => {
   const getActivePlayer = () => activePlayer;
 
   const playRound = (row, column) => {
-    Gameboard.placeSign(row, column, activePlayer.sign);
+    if (!gameActive) return;
+    
+    const movePlaced = Gameboard.placeSign(row, column, activePlayer.sign);
+    if (!movePlaced) return;
 
     DisplayController.renderBoard();
 
     const winner = Gameboard.checkWinner();
     if (winner !== null) {
+      gameActive = false;
       DisplayController.showResult(`${activePlayer.name} ha vinto!`);
       return;
     }
 
     if (Gameboard.checkTie()) {
+      gameActive = false;
       DisplayController.showResult("Pareggio!");
       return;
     }
@@ -128,6 +156,8 @@ const GameController = (() => {
   return {
     getActivePlayer,
     playRound,
+    startGame,
+    resetGame,
   };
 
 })();
@@ -150,8 +180,8 @@ const DisplayController = (() => {
         cellDiv.dataset.column = colIndex;
 
         cellDiv.addEventListener("click", () => {
-          const row = parseInt(cellDiv.dataset.rowIndex);
-          const column = parseInt(cellDiv.dataset.colIndex);
+          const row = parseInt(cellDiv.dataset.row);
+          const column = parseInt(cellDiv.dataset.column);
           GameController.playRound(row, column);
         });
         
@@ -168,6 +198,32 @@ const DisplayController = (() => {
   const showResult = (message) => {
     resultMessageDiv.textContent = message;
   };
+
+  const startBtn = document.getElementById("start-btn");
+
+  startBtn.addEventListener("click", () => {
+    const nameOne = document.getElementById("player-one").value;
+    const nameTwo = document.getElementById("player-two").value;
+
+    if (nameOne === "" || nameTwo === "") {
+      alert ("You need to choose players names to play the game!");
+      return;
+    }
+
+    GameController.startGame(nameOne, nameTwo);
+    renderBoard();
+    updateTurnMessage();
+
+  });
+
+  const resetBtn = document.getElementById("reset-btn");
+
+  resetBtn.addEventListener("click", () => {
+    GameController.resetGame();
+    resultMessageDiv.textContent = "";
+    renderBoard();
+    updateTurnMessage();
+  });
 
   return {
     renderBoard,
