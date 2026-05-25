@@ -46,20 +46,89 @@ h1, h2, h3, h4, h5, h6 {
   isolation: isolate;
 }
 
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #1f2937;
+  margin: 1rem;
+  min-height: 100vh;
+}
 
+.game {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 400px;
+  height: 600px;
+  background-color: #2b313b;
+  border: 3px solid rgb(28, 27, 28);
+  border-radius: 20px;
+  box-shadow: rgb(28, 27, 28) 0px 6px;
+  padding: 14px;
+}
 
+.display {
+  height: 80px;
+  border: 2px solid rgb(28, 27, 28);
+  border-radius: 8px;
+  background-color: #A4B4CD;
+  box-shadow: inset 0px 2px 3px 2px;
+  padding: 10px;
+  color: #1c121a;
+}
+
+.game-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
 
 #game-board {
   display: grid;
-  grid-template-columns: repeat(3, 100px);
-  grid-template-rows: repeat(3, 100px);
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  height: 280px;
+  gap: 8px;
 }
 
 #game-board div {
-  border: 2px solid black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
+  border: 2px solid #1C121A;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 40px;
+  box-shadow: rgb(28, 27, 28) 0px 6px;
+  text-align: center;
+  transition: all 0.2s ease;
   cursor: pointer;
+  background-color: #e5e7eb;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.2s;
+  color: #1c121a;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+  color: #e0ad6c;
+  font-size: 1.7rem;
+}
+
+#turn-message {
+  font-size: 0.9rem;
+  color: #1c121a;
+}
+
+#result-message {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1c121a;
 }
