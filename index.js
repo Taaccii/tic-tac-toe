@@ -139,13 +139,13 @@ const GameController = (() => {
     const winner = Gameboard.checkWinner();
     if (winner !== null) {
       gameActive = false;
-      DisplayController.showResult(`${activePlayer.name} ha vinto!`);
+      DisplayController.showResult(`${activePlayer.name} wins!`);
       return;
     }
 
     if (Gameboard.checkTie()) {
       gameActive = false;
-      DisplayController.showResult("Pareggio!");
+      DisplayController.showResult("It's a tie!");
       return;
     }
 
@@ -167,6 +167,7 @@ const DisplayController = (() => {
   const boardDiv = document.getElementById("game-board");
   const turnMessageDiv = document.getElementById("turn-message");
   const resultMessageDiv = document.getElementById("result-message");
+  resultMessageDiv.classList.add('hidden');
 
   const renderBoard = () => {
     boardDiv.innerHTML = "";
@@ -176,6 +177,12 @@ const DisplayController = (() => {
       row.forEach((cell, colIndex) => {
         const cellDiv = document.createElement("div");
         cellDiv.textContent = cell.getValue() === 0 ? "" : cell.getValue();
+        if (cell.getValue() === "X") {
+          cellDiv.classList.add("cell-x");
+        } else if (cell.getValue() === "O") {
+          cellDiv.classList.add("cell-o");
+        }
+        
         cellDiv.dataset.row = rowIndex;
         cellDiv.dataset.column = colIndex;
 
@@ -192,51 +199,87 @@ const DisplayController = (() => {
 
   const updateTurnMessage = () => {
   const activePlayer = GameController.getActivePlayer();
-  turnMessageDiv.textContent = `È il turno di ${activePlayer.name}`;
+  turnMessageDiv.textContent = `${activePlayer.name}'s turn`;
+  turnMessageDiv.classList.remove('hidden');
+  resultMessageDiv.classList.add('hidden');
   };
 
   const showResult = (message) => {
+
+    const displayDiv = document.querySelector('.display');
+
+    if (message.includes("wins")) {
+      displayDiv.classList.add('winner');
+    } else {
+      displayDiv.classList.add('tie');
+    }
+
     resultMessageDiv.textContent = message;
+    resultMessageDiv.classList.remove('hidden');
+    turnMessageDiv.classList.add('hidden');
   };
 
   const startBtn = document.getElementById("start-btn");
+  const resetBtn = document.getElementById("reset-btn");
 
   startBtn.addEventListener("click", () => {
+
+    const displayDiv = document.querySelector('.display');
+    displayDiv.classList.remove('winner', 'tie');
+  
     const nameOne = document.getElementById("player-one").value;
     const nameTwo = document.getElementById("player-two").value;
 
     if (nameOne === "" || nameTwo === "") {
-      alert ("You need to choose players names to play the game!");
+      displayDiv.classList.add('error');
+      turnMessageDiv.textContent = "You need to choose players names to play the game!";
+
+      setTimeout(() => {
+        displayDiv.classList.remove('error');
+        turnMessageDiv.textContent = "Enter player names to start";
+      }, 2000);
+
       return;
     }
 
     GameController.startGame(nameOne, nameTwo);
+    startBtn.disabled = true;
+    resetBtn.disabled = false;
     renderBoard();
     updateTurnMessage();
 
   });
 
-  const resetBtn = document.getElementById("reset-btn");
+  const showInitMessage = () => {
+    turnMessageDiv.textContent = "Enter player names to start";
+    turnMessageDiv.classList.remove('hidden');
+    resultMessageDiv.classList.add('hidden');
+  }
 
   resetBtn.addEventListener("click", () => {
+    const displayDiv = document.querySelector('.display');
+    displayDiv.classList.remove('winner', 'tie');
     GameController.resetGame();
+    startBtn.disabled = false;
+    resetBtn.disabled = true;
     resultMessageDiv.textContent = "";
+    showInitMessage();
     renderBoard();
-    updateTurnMessage();
   });
 
   return {
     renderBoard,
     updateTurnMessage,
     showResult,
+    showInitMessage,
   };
 
 })();
 
 
 const init = () => {
+  DisplayController.showInitMessage();
   DisplayController.renderBoard();
-  DisplayController.updateTurnMessage();
 };
 
 init();

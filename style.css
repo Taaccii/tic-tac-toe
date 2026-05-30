@@ -47,7 +47,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Orbitron', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -62,16 +62,20 @@ body {
   flex-direction: column;
   justify-content: space-between;
   width: 400px;
-  height: 600px;
+  height: auto;
+  gap: 20px;
   background-color: #2b313b;
   border: 3px solid rgb(28, 27, 28);
   border-radius: 20px;
   box-shadow: rgb(28, 27, 28) 0px 6px;
-  padding: 14px;
+  padding: 20px;
 }
 
 .display {
-  height: 80px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 2px solid rgb(28, 27, 28);
   border-radius: 8px;
   background-color: #A4B4CD;
@@ -80,10 +84,24 @@ body {
   color: #1c121a;
 }
 
+.display.winner {
+  background-color: #22c55e;
+}
+
+.display.tie {
+  background-color: #e0ad6c;
+}
+
+.display.error {
+  background-color: #c43f24;
+}
+
 .game-header {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  grid-template-rows: auto auto;
+  gap: 12px 8px;
+  width: 100%;
 }
 
 #game-board {
@@ -95,40 +113,163 @@ body {
 }
 
 #game-board div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 2px solid #1C121A;
   border-radius: 8px;
   font-weight: bold;
-  font-size: 40px;
+  font-size: 50px;
   box-shadow: rgb(28, 27, 28) 0px 6px;
-  text-align: center;
-  transition: all 0.2s ease;
   cursor: pointer;
   background-color: #e5e7eb;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
   transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.2s;
   color: #1c121a;
-  -webkit-appearance: none;
-  appearance: none;
 }
 
 h1 {
-  font-family: 'Orbitron', sans-serif;
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
   text-align: center;
   color: #e0ad6c;
-  font-size: 1.7rem;
+  font-size: 1.8rem;
 }
 
-#turn-message {
-  font-size: 0.9rem;
-  color: #1c121a;
-}
-
+#turn-message,
 #result-message {
   font-size: 1.2rem;
   font-weight: 700;
+  text-align: center;
   color: #1c121a;
+}
+
+.game-header input {
+  border: 2px solid #1c121a;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background-color: #e5e7eb;
+  color: #1c121a;
+  outline: none;
+  width: 100%;
+}
+
+.game-header input:focus {
+  border-color: #4a93f2;
+}
+
+#start-btn {
+  background-color: #e0ad6c;
+  border: 2px solid #1c121a;
+  border-radius: 8px;
+  box-shadow: rgb(28, 27, 28) 0px 6px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #1c121a;
+}
+
+#reset-btn {
+  background-color: #c43f24f1;
+  border: 2px solid #1c121a;
+  border-radius: 8px;
+  box-shadow: rgb(28, 27, 28) 0px 6px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #1c121a;
+}
+
+#start-btn, #reset-btn {
+  width: 100%;
+  padding: 8px 0;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.2s;
+}
+
+.game-header input, 
+.game-header button {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hidden {
+  display: none;
+}
+
+#game-board .cell-x {
+  color: #4a93f2;
+  text-shadow: 2px 2px 0px #1a5fa8;
+}
+
+#game-board .cell-o {
+  color: #f87171;
+  text-shadow: 2px 2px 0px #b91c1c;
+}
+
+#game-board div:active {
+  transform: translateY(3px) scale(0.95);
+  box-shadow: 1px 1px 2px rgba(65, 62, 62, 0.6);
+  transition: transform 0s;
+}
+
+#start-btn:active,
+#reset-btn:active {
+  transform: translateY(3px) scale(0.95);
+  box-shadow: 1px 1px 2px rgba(65, 62, 62, 0.6);
+  transition: transform 0s;
+}
+
+#start-btn:disabled,
+#reset-btn:disabled {
+  opacity: 0.4;
+}
+
+#start-btn:disabled:active,
+#reset-btn:disabled:active {
+  transform: none;
+  box-shadow: rgb(28, 27, 28) 0px 6px;
+}
+
+footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+footer a {
+  color: #e0ad6c;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+
+
+@media (max-width: 480px) {
+  .game {
+    width: 95vw;
+    padding: 14px;
+    gap: 14px;
+  }
+
+  h1 {
+    font-size: 1.2rem;
+  }
+
+  #game-board {
+    height: 220px;
+  }
+
+  #game-board div {
+    font-size: 38px;
+  }
+
+  #turn-message,
+  #result-message {
+    font-size: 0.9rem;
+  }
 }
